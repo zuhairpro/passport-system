@@ -34,6 +34,21 @@
             }
         }
         loadDB();
+// دالة لحفظ قاعدة البيانات محليًا
+function saveDB() {
+    const data = db.export();
+    const blob = new Blob([data], { type: 'application/octet-stream' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'passport_updated.db';
+    link.click();
+}
+
+// أضف زرًا في واجهة المستخدم
+const saveButton = document.createElement('button');
+saveButton.textContent = 'حفظ التعديلات';
+saveButton.onclick = saveDB;
+document.body.appendChild(saveButton);
     </script>
 </body>
 </html>
