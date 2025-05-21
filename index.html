@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <title>نظام الجوازات</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        #editor { width: 100%; height: 100px; margin: 10px 0; }
+        #output { background: #f0f0f0; padding: 10px; white-space: pre-wrap; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>نظام إدارة طلبات الجوازات</h1>
+    <textarea id="editor" placeholder="أدخل استعلام SQL... مثال: SELECT * FROM citizens;"></textarea>
+    <button onclick="runQuery()">تشغيل</button>
+    <pre id="output"></pre>
+
+    <script>
+        let db;
+        async function loadDB() {
+            const response = await fetch('passport.db');
+            const buffer = await response.arrayBuffer();
+            const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}` });
+            db = new SQL.Database(new Uint8Array(buffer));
+        }
+        function runQuery() {
+            const query = document.getElementById('editor').value;
+            try {
+                const results = db.exec(query);
+                document.getElementById('output').textContent = JSON.stringify(results, null, 2);
+            } catch (err) {
+                document.getElementById('output').textContent = '❗ خطأ: ' + err.message;
+            }
+        }
+        loadDB();
+    </script>
+</body>
+</html>
